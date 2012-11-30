@@ -21,8 +21,10 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
 
+require 'json'
+
 module Testflight
-  VERSION = "0.1.2"
+  class Config
+    
+  end
 end
-
-

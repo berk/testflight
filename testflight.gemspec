@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
   s.summary     = "iOS application deployment automation"
   s.description = "Mechanism for building, packaging, tagging and deploying XCode projects to testflightapp.com"
  
-  s.files        = Dir.glob("{bin,lib}/**/*") + %w(LICENSE README.md)
+  s.files        = Dir.glob("{bin,lib}/**/*") + %w(LICENSE README.rdoc)
   s.executables  = ['takeoff']
   s.require_path = 'lib'
 
