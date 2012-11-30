@@ -1,16 +1,16 @@
 = Introduction
 
-If you are an iOS developer, like me, you probably have dealt with tidious 
+If you are an iOS developer, like me, you probably have dealt with the tedious 
 tasks of manually building, packaging, tagging, commiting and deploying your 
-iOS applications to testflightapp.com. And probably wondered that there must be an easier way to do so.
+iOS applications to testflightapp.com. Your probably wondered if there is an easier way to do so.
 
-Well, you are absolutely right! This gem is going to make your life much much easier. Here is what it does:
+Well, you are absolutely right! This gem is going to make your life much easier. Here is what it does:
 
 1. Reads your XCode project defintion to get your app version and build number 
 2. Commits all your changes to the git repository
 3. Builds your project (or workspace)
-4. Packages your application into an ipa file
-5. Uploads the ipa file to testflightapp.com
+4. Packages your application into an IPA file
+5. Uploads the IPA file to testflightapp.com
 6. Tags your project with the version and build
 7. Increments your app build number and commits it to the repo
 
