@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
  
   s.files        = Dir.glob("{bin,lib}/**/*") + %w(LICENSE README.rdoc)
   s.executables  = ['takeoff']
-  s.require_path = 'lib'
+  s.require_path = ['lib', 'lib/testflight']
 
   s.add_dependency "plist", "~> 3.1.0"
 end

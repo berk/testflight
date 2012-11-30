@@ -1,9 +1,9 @@
 #!/usr/bin/env ruby
 
-require 'fileutils'
-require 'yaml'
 require 'pp'
-require 'plist'
+
+require File.expand_path(File.join(File.dirname(__FILE__), "../lib/testflight/config.rb"))
+require File.expand_path(File.join(File.dirname(__FILE__), "../lib/testflight/prompter.rb"))
 
 XCODE_BUILDER       = "/usr/bin/xcodebuild"
 XCODE_PACKAGER      = "/usr/bin/xcrun"
@@ -17,260 +17,90 @@ TESTFLIGHT_ENDPOINT = "http://testflightapp.com/api/builds.json"
 # package files
 # deploy to testflight app
 
-
-def project_dir
-  Dir.pwd
-end
-
-def project_files 
-  @project_files ||= Dir.entries(project_dir)
-end
-
-def file_name_by_ext(ext)
-  project_files.select{|file| file.match(/#{ext}$/)}.first
-end
-
-
-def workspace_name
-  @workspace_name ||= file_name_by_ext('xcworkspace')
-end
-
-def project_name
-  @project_name ||= file_name_by_ext('xcodeproj')
-end
-
-def type
-  return "unknown" if workspace_name.nil? and project_name.nil?
-  @type ||= workspace_name ? 'workspace' : 'project'
-end
-
-def application_name
-  @application_name ||= begin
-    name = workspace_name || project_name
-    name = name.split(".")[0..-2].join(".") if name
-    name
-  end  
-end
-
-def default_config
-  {
-    "build"       => {
-      "developer_name"      => "As it appears in your Apple certificate",
-      "increment_bundle"    => true,
-      "commit_changes"      => true
-    },
-    "testflight"  => {
-      "api_token"           => "Get it from https://testflightapp.com/account/#api",
-      "team_token"          => "Get it from https://testflightapp.com/dashboard/team/edit/",
-      "distribution_lists"  => [""]
-    }
-  }
-end
-
-def valid_config?
-  return false unless config
-  return false if config.empty?
-  return false if config["build"].nil? 
-  return false if config["build"]["developer_name"].nil?
-  return false if config["testflight"].nil? 
-  return false if config["testflight"]["api_token"].nil?
-  return false if config["testflight"]["team_token"].nil?
-  return false if config["testflight"]["distribution_lists"].nil?
-  true
-end
-
-def config_file
-  '.testflight'
-end
-
-def config
-  @config ||= begin
-    if File.exist?(config_file) 
-      YAML::load(File.open(config_file)) 
-    else
-      File.open(config_file, "w") do |f| 
-        f.write(default_config.to_yaml) 
-      end
-      YAML::load(File.open(config_file)) 
-    end
-  end
-end
-
-def build_dir
-  "#{project_dir}/build"
-end
-
-def provisioning_dir
-  "#{project_dir}/Provisioning"
-end
-
-def distributions_dir
-  "#{project_dir}/Distributions"
-end
+####################################################################################
+## Building Project 
+####################################################################################
 
 def build_workspace
-  cmd = "#{XCODE_BUILDER} -workspace '#{workspace_name}' "
-  cmd << "-scheme '#{application_name}' "
+  cmd = "#{XCODE_BUILDER} -workspace '#{Testflight::Config.workspace_name}' "
+  cmd << "-scheme '#{Testflight::Config.application_name}' "
   cmd << "-sdk 'iphoneos6.0' "
   cmd << "-configuration 'AdHoc' "
   cmd << "-arch 'armv6 armv7' "
-  cmd << "CONFIGURATION_BUILD_DIR='#{build_dir}' "
+  cmd << "CONFIGURATION_BUILD_DIR='#{Testflight::Config.build_dir}' "
   pp "Building Workspace..."
   pp cmd
   unless system(cmd)
-    pp "Failed to package the workspace"
+    pp "Failed to build workspace"
     exit 1
   end
 end
 
 def build_project
-  cmd = "#{XCODE_BUILDER} -target '#{application_name}' "
+  cmd = "#{XCODE_BUILDER} -target '#{Testflight::Config.application_name}' "
   cmd << "-sdk 'iphoneos6.0' "
   cmd << "-configuration 'AdHoc' "
+
   pp "Building Project..."
   pp cmd
   unless system(cmd)
-    pp "Failed to build the project"
+    pp "Failed to build project"
     exit 1
   end
 end
 
-def ad_hoc_provisioning_name
-  @ad_hoc_provisioning_name ||= begin
-    files = Dir.entries(provisioning_dir)
-    files.select{|file| file.match(/mobileprovision$/)}.first
-  end
-end
-
-def distribution_file
-  "#{distributions_dir}/#{application_name}.ipa"
-end
+####################################################################################
+## Packaging Project 
+####################################################################################
 
 def package_workspace
   cmd = "#{XCODE_PACKAGER} -sdk iphoneos PackageApplication "
-  cmd << "-v '#{build_dir}/#{application_name}.app' "
-  cmd << "-o '#{distribution_file}' "
-  cmd << "--sign '#{config["build"]["developer_name"]}' "
-  cmd << "--embed '#{provisioning_dir}/#{ad_hoc_provisioning_name}'"
+  cmd << "-v '#{Testflight::Config.build_dir}/#{Testflight::Config.application_name}.app' "
+  cmd << "-o '#{Testflight::Config.distribution_file}' "
+  cmd << "--sign '#{Testflight::Config.developer_name}' "
+  cmd << "--embed '#{Testflight::Config.provisioning_dir}/#{Testflight::Config.ad_hoc_provisioning_name}'"
   
   pp "Packaging Workspace..."
   pp cmd
   unless system(cmd)
-    pp "Failed to package the workspace"
+    pp "Failed to package workspace"
     exit 1
   end
 end
 
 def package_project
   cmd = "#{XCODE_PACKAGER} -sdk iphoneos PackageApplication "
-  cmd << "-v '#{build_dir}/AdHoc-iphoneos/#{application_name}.app' "
-  cmd << "-o '#{distribution_file}' "
-  cmd << "--sign '#{config["build"]["developer_name"]}' "
-  cmd << "--embed '#{provisioning_dir}/#{ad_hoc_provisioning_name}'"
+  cmd << "-v '#{Testflight::Config.build_dir}/AdHoc-iphoneos/#{Testflight::Config.application_name}.app' "
+  cmd << "-o '#{Testflight::Config.distribution_file}' "
+  cmd << "--sign '#{Testflight::Config.developer_name}' "
+  cmd << "--embed '#{Testflight::Config.provisioning_dir}/#{Testflight::Config.ad_hoc_provisioning_name}'"
   
   pp "Packaging Project..."
   pp cmd
   unless system(cmd)
-    pp "Failed to package the project"
+    pp "Failed to package project"
     exit 1
   end
 end
 
-def setup
-  unless application_name
-    pp "This folder does not contain an xCode project or a workspace."
-    exit 1
-  end
-
-  unless valid_config?
-    pp "Ensure that you have provided all of the information in the #{config_file} config file"
-    exit 1
-  end
-
-  unless project_files.include?("Distributions")
-    FileUtils.mkdir("Distributions")
-    @project_files = nil
-  end
-
-  unless project_files.include?("Provisioning")
-    FileUtils.mkdir("Provisioning")
-    @project_files = nil
-  end
-
-  unless ad_hoc_provisioning_name
-    pp "Please copy your Ad Hoc Provisioning Profile into the provisioning folder."
-    exit 1
-  end
-end
-
-def read_options(question, opts=["Yes", "No"], vals=["y", "yes", "n", "no"], joiner = "/")
-  prompt = "(#{opts.join(joiner)})? "
-  pp question
-  
-  $stdout.print(prompt)
-  
-  $stdin.each_line do |line|
-    value = line.strip.downcase
-    return value if vals.include?(value)
-    $stdout.print(prompt)
-  end  
-end
-
-def read_info(question, prompt="> ", allow_blank=false)
-  pp(question) if question
-  
-  $stdout.print(prompt)
-  
-  $stdin.each_line do |line|
-    value = line.strip.downcase
-    return value if allow_blank 
-    return value unless value.empty?
-    $stdout.print(prompt)
-  end  
-end
-
-def read_distribution_lists
-  lists = []
-  vals = read_info(nil, prompt="? ") 
-  vals.split(",").each do |index|
-    index = index.to_i - 1
-    return nil if index<0 or index>=config["testflight"]["distribution_lists"].size
-    lists << config["testflight"]["distribution_lists"][index]
-  end
-  lists
-end
-
-def select_distribution_lists
-  return [] unless config["testflight"]["distribution_lists"]
-  
-  pp "Which distribution lists would you like to send this build to? (Select one or more lists, separated with comma.)"
-  config["testflight"]["distribution_lists"].each_with_index do |list, index|
-    pp "    #{index+1}) #{list}"
-  end
-  
-  lists = read_distribution_lists
-  while lists.nil?
-    pp "Invalid selection, please try again."
-    lists = read_distribution_lists
-  end
-  
-  lists
-end
+####################################################################################
+## Uploading Project 
+####################################################################################
 
 def upload_to_testflightapp
   pp "Uploading to TestFlightApp..."
 
-  notes = read_info("What has changed in this build?")
+  notes = Testflight::Prompter.read_info("What has changed in this build?")
 
-  lists = select_distribution_lists
+  lists = Testflight::Prompter.select_set("Which distribution lists would you like to send this build to? Select one or more lists, separated with comma.", Testflight::Config.distribution_lists)
 
-  notify = read_options("Would you like to notify your team members by email about this build?")
+  notify = Testflight::Prompter.read_options("Would you like to notify your team members by email about this build?")
   ["y", "yes"].include?(notify) ? notify = "true" : notify = "false"
 
   cmd = "curl #{TESTFLIGHT_ENDPOINT} "
-  cmd << "-F file=@#{distribution_file} "
-  cmd << "-F api_token=#{config["testflight"]["api_token"]} "
-  cmd << "-F team_token=#{config["testflight"]["team_token"]} "
+  cmd << "-F file=@#{Testflight::Config.distribution_file} "
+  cmd << "-F api_token=#{Testflight::Config.api_token} "
+  cmd << "-F team_token=#{Testflight::Config.team_token} "
   cmd << "-F notify=#{notify} "
   cmd << "-F distribution_lists=#{lists.join(",")} "
   cmd << "-F notes='#{notes}'"
@@ -286,33 +116,12 @@ end
 ## Project Versioning
 ####################################################################################
 
-def project_info_path
-  files = Dir["**/#{application_name}-Info.plist"]
-  if files.empty?
-    pp "Cannot locate #{application_name}-Info.plist file. Please make sure such file exists in your project."
-    exit 1
-  end
-  files.first
-end
-
-def project_info
-  @project_info ||= Plist::parse_xml(project_info_path)
-end
-
-def project_version
-  "#{project_info["CFBundleShortVersionString"]} (#{project_info["CFBundleVersion"]})"
-end
-
-def project_version_short
-  "#{project_info["CFBundleShortVersionString"]}.#{project_info["CFBundleVersion"]}"
-end
-
 def increment_bundle_version
-  project_info["CFBundleVersion"] = (project_info["CFBundleVersion"].to_i + 1).to_s
-  pp "Incrementing bundle version to #{project_info["CFBundleVersion"]}..."
+  Testflight::Config.project_info["CFBundleVersion"] = (Testflight::Config.build_number.to_i + 1).to_s
+  pp "Incrementing bundle version to #{Testflight::Config.build_number}..."
   
-  File.open(project_info_path, "w") do |f| 
-    f.write(project_info.to_plist) 
+  File.open(Testflight::Config.project_info_path, "w") do |f| 
+    f.write(Testflight::Config.project_info.to_plist) 
   end
   @project_info = nil
 end
@@ -333,7 +142,7 @@ def commit_changes(msg)
   system("git commit -m '#{msg}'")
   system("git push")
   
-  system("git tag -a #{project_version_short} -m 'Release #{project_version}'")
+  system("git tag -a #{Testflight::Config.project_version_short} -m 'Release #{Testflight::Config.project_version}'")
 end
 
 ####################################################################################
@@ -341,13 +150,13 @@ end
 ####################################################################################
 
 def deploy
-  setup
+  Testflight::Config.setup
 
-  if config["build"]["commit_changes"]
-    commit_changes("Preparing build #{project_version}")
+  if Testflight::Config.commit_changes?
+    commit_changes("Preparing build #{Testflight::Config.project_version}")
   end
-
-  if workspace_name
+  
+  if Testflight::Config.workspace?
     build_workspace
     package_workspace
   else
@@ -359,10 +168,10 @@ def deploy
   
   pp ""
   
-  if config["build"]["increment_bundle"]
+  if Testflight::Config.increment_bundle?
     increment_bundle_version
-    if config["build"]["commit_changes"]
-      commit_changes("Incrementing build number to #{project_version}")
+    if Testflight::Config.commit_changes?
+      commit_changes("Incrementing build number to #{Testflight::Config.project_version}")
     end
   end
   
