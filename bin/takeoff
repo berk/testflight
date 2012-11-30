@@ -123,7 +123,6 @@ def increment_bundle_version
   File.open(Testflight::Config.project_info_path, "w") do |f| 
     f.write(Testflight::Config.project_info.to_plist) 
   end
-  @project_info = nil
 end
 
 ####################################################################################
