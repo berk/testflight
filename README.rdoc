@@ -28,7 +28,7 @@ $ testflight takeoff
 
 = Configuration
 
-To setup your project with the deployment script, run the following command:
+To setup your project with the deployment script, run the following command from within your Xcode project folder:
 
   $ testflight checkin
 

@@ -12,7 +12,7 @@ Gem::Specification.new do |spec|
   spec.email       = ["theiceberk@gmail.com"]
   spec.homepage    = "https://github.com/berk/testflight"
   spec.summary     = "iOS application deployment automation"
-  spec.description = "Mechanism for building, packaging, tagging and deploying xCode projects to testflightapp.com"
+  spec.description = "Mechanism for building, packaging, tagging and deploying Xcode projects to testflightapp.com"
  
   spec.files        = Dir.glob("{bin,lib}/**/*") + %w(LICENSE README.rdoc)
   spec.executables  = spec.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
