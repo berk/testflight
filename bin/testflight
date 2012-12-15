@@ -26,10 +26,9 @@
 # Abort beautifully with ctrl+c.
 Signal.trap(:INT) { abort "\nAborting testflight task." }
 
-# For debugging local script and not conflicting with the installed gem
-# ['cli.rb', 'builder.rb', 'config.rb'].each do |f|
-#   require File.expand_path(File.join(File.dirname(__FILE__), "../lib/testflight/#{f}"))
-# end
+['cli.rb', 'builder.rb', 'config.rb'].each do |f|
+  require File.expand_path(File.join(File.dirname(__FILE__), "../lib/testflight/#{f}"))
+end
 
-require 'testflight'
+# require 'testflight'
 Testflight::Cli.start
