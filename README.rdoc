@@ -32,9 +32,7 @@ To setup your project with the deployment script, run the following command from
 
   $ testflight checkin
 
-This command will ask you a few questions that will guide you through a configuration process.
-If you don't like being asked questions and prefer to do it manually, just create a .tesflight file 
-in your iOS project folder and provide the following information:
+This command will ask you a few questions about your project. If you don't like being asked questions and prefer to configure your project manually, just create a .tesflight file in your Xcode project folder and provide the following information:
 
   build:
     developer_name:     # This must be your company name or your name as it appears in your .cer from Apple
@@ -50,7 +48,7 @@ in your iOS project folder and provide the following information:
 
 = Execution
 
-Once you have checked in (you only need to do it once per project), you are ready for takeoff. Go to your project folder and simple type:
+Once you have checked in (you only need to do it once per project), you are ready for takeoff. Go to your project folder and simply type:
 
    $ testflight takeoff
 
