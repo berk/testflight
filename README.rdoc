@@ -2,7 +2,7 @@
 
 If you are an iOS developer, like me, you probably have dealt with the tedious 
 tasks of manually building, packaging, tagging, commiting and deploying your 
-iOS applications to testflightapp.com. You are probably wondering if there is a better way to do it.
+iOS applications to testflightapp.com. You are probably wondering if there is a better way to do so.
 
 Well, you are absolutely right! This gem is going to make your life much easier. Here is what it does:
 
@@ -43,7 +43,7 @@ in your iOS project folder and provide the following information:
 
 = Execution
 
-Once you have checked in (you only need to it once per project), you are ready for takeoff. Go to your project folder and simple type:
+Once you have checked in (you only need to do it once per project), you are ready for takeoff. Go to your project folder and simple type:
 
    $ testflight takeoff
 
