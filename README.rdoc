@@ -20,6 +20,12 @@ All that with a simple command:
 $ testflight takeoff
 
 
+
+= Installation
+
+  gem install testflight
+
+
 = Configuration
 
 To setup your project with the deployment script, run the following command:
