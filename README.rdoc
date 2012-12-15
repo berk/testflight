@@ -2,11 +2,11 @@
 
 If you are an iOS developer, like me, you probably have dealt with the tedious 
 tasks of manually building, packaging, tagging, commiting and deploying your 
-iOS applications to testflightapp.com. Your probably wondered if there is an easier way to do so.
+iOS applications to testflightapp.com. You are probably wondering if there is a better way to do it.
 
 Well, you are absolutely right! This gem is going to make your life much easier. Here is what it does:
 
-1. Reads your XCode project defintion to get your app version and build number 
+1. Reads your XCode project info file to get your app version and build number 
 2. Commits all your changes to the git repository
 3. Builds your project (or workspace)
 4. Packages your application into an IPA file
@@ -16,32 +16,41 @@ Well, you are absolutely right! This gem is going to make your life much easier.
 
 All that with a simple command:
 
-$ takeoff
+$ testflight takeoff
 
 
 = Configuration
 
-All you have to do is add .tesflight file to your project folder with the following content:
+To setup your project with the deployment script, run the following command:
+
+  $ testflight checkin
+
+This command will ask you a few questions that will guide you through a configuration process.
+If you don't like being asked questions and prefer to do it manually, just create a .tesflight file 
+in your iOS project folder and provide the following information:
 
   build:
-    developer_name:     # This must be your company name or your name as it appears in your certificate
-    increment_bundle:   true
-    commit_changes:     true
+    developer_name:     # This must be your company name or your name as it appears in your .cer from Apple
+    increment_bundle:   true  # If you want each deployment to increment your build number
+  git:
+    commit_changes:     true   # if you are using git and would like to push changes before each build 
+    tag_build:          true   # will tag each build in git
   testflight: 
     api_token:          # Get it from https://testflightapp.com/account/#api
     team_token:         # Get it from https://testflightapp.com/dashboard/team/edit/
-    distribution_lists: ["Internal", "Everyone"] # Configure your distribution lists on https://testflightapp.com
+    distribution_lists: ["Internal", "Everyone"] # Configure your distribution lists at https://testflightapp.com
 
 
-Then go to your project folder and simple type:
+= Execution
 
-$ takeoff
+Once you have checked in (you only need to it once per project), you are ready for takeoff. Go to your project folder and simple type:
 
+   $ testflight takeoff
 
 Have a safe flight!
 
 
-= Contributions
+= Contribution
 
 Clone the repository, make any changes you like and send me a pull request.
 

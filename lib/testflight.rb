@@ -22,7 +22,7 @@
 #++
 
 module Testflight
-  VERSION = "0.1.4"
+  autoload :Cli,      'testflight/cli'
+  autoload :Builder,  'testflight/builder'
+  autoload :Config,   'testflight/config'
 end
-
-

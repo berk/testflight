@@ -23,7 +23,6 @@
 
 require 'fileutils'
 require 'yaml'
-require 'pp'
 require 'plist'
 
 module Testflight
@@ -33,69 +32,57 @@ module Testflight
       '.testflight'
     end
 
-    def self.defaults
-      {
-        "build"       => {
-          "developer_name"      => "As it appears in your Apple certificate",
-          "increment_bundle"    => true,
-          "commit_changes"      => true
-        },
-        "testflight"  => {
-          "api_token"           => "Get it from https://testflightapp.com/account/#api",
-          "team_token"          => "Get it from https://testflightapp.com/dashboard/team/edit/",
-          "distribution_lists"  => [""]
-        }
-      }
-    end
+    ##################################################
+    ## Configuration Attributes
+    ##################################################
 
     def self.config
-      @config ||= begin
-        if File.exist?(path) 
-          YAML::load(File.open(path)) 
-        else
-          File.open(path, "w") do |f| 
-            f.write(defaults.to_yaml) 
-          end
-          raise "Please update #{path} with all necessary properties."
-        end
-      end
+      @config ||= YAML::load(File.open(path)) 
     end
 
-    def self.commit_changes?
-      config["build"]["commit_changes"]
-    end
-
-    def self.increment_bundle?
-      config["build"]["increment_bundle"]
+    def self.build
+      config["build"]
     end
 
     def self.developer_name
-      config["build"]["developer_name"]
+      build["developer_name"]
+    end
+
+    def self.increment_bundle?
+      build["increment_bundle"]
+    end
+
+    def self.git
+      config["git"]
+    end
+
+    def self.commit_changes?
+      git["commit_changes"]
+    end
+
+    def self.tag_build?
+      git["tag_build"]
+    end
+
+    def self.testflight
+      config["testflight"]
     end
 
     def self.distribution_lists
-      config["testflight"]["distribution_lists"]
+      testflight["distribution_lists"]
     end
 
     def self.api_token
-      config["testflight"]["api_token"]
+      testflight["api_token"]
     end
 
     def self.team_token
-      config["testflight"]["team_token"]
+      testflight["team_token"]
     end
 
-    def self.valid?
-      return false unless config
-      return false if config.empty?
-      return false if config["build"].nil? 
-      return false if config["build"]["developer_name"].nil?
-      return false if config["testflight"].nil? 
-      return false if config["testflight"]["api_token"].nil?
-      return false if config["testflight"]["team_token"].nil?
-      return false if config["testflight"]["distribution_lists"].nil?
-      true
-    end
+    ##################################################
+    ## Helper Methods
+    ##################################################
 
     def self.project_dir
       Dir.pwd
@@ -158,42 +145,16 @@ module Testflight
     end
 
     def self.distribution_file
-      "#{distributions_dir}/#{application_name}.ipa"
+      "#{distributions_dir}/#{application_name}_#{project_version_short}.ipa"
     end
 
-    def self.setup
-      unless application_name
-        pp "This folder does not contain an xCode project or a workspace."
-        exit 1
-      end
-
-      unless valid?
-        pp "Ensure that you have provided all of the information in the #{config_file} config file"
-        exit 1
-      end
-
-      unless project_files.include?("Distributions")
-        FileUtils.mkdir("Distributions")
-        @project_files = nil
-      end
-
-      unless project_files.include?("Provisioning")
-        FileUtils.mkdir("Provisioning")
-        @project_files = nil
-      end
-
-      unless ad_hoc_provisioning_name
-        pp "Please copy your Ad Hoc Provisioning Profile into the provisioning folder."
-        exit 1
-      end
+    def self.project_info_file_name
+      "#{application_name}-Info.plist"
     end
 
     def self.project_info_path
-      files = Dir["**/#{application_name}-Info.plist"]
-      if files.empty?
-        pp "Cannot locate #{application_name}-Info.plist file. Please make sure such file exists in your project."
-        exit 1
-      end
+      files = Dir["**/#{project_info_file_name}"]
+      return nil if files.empty? 
       files.first
     end
 

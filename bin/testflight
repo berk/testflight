@@ -1,3 +1,5 @@
+#!/usr/bin/env ruby
+
 #--
 # Copyright (c) 2012 Michael Berkovich
 #
@@ -21,8 +23,13 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
 
-module Testflight
-  VERSION = "0.1.4"
-end
+# Abort beautifully with ctrl+c.
+Signal.trap(:INT) { abort "\nAborting testflight task." }
 
+# For debugging local script and not conflicting with the installed gem
+# ['cli.rb', 'builder.rb', 'config.rb'].each do |f|
+#   require File.expand_path(File.join(File.dirname(__FILE__), "../lib/testflight/#{f}"))
+# end
 
+require 'testflight'
+Testflight::Cli.start

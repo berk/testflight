@@ -1,0 +1,10 @@
+build:
+  developer_name:     "<%= @company_name %>"
+  increment_bundle:   <%= @should_increment_bundle == true %>
+git:  
+  commit_changes:     <%= @should_commit_changes == true %>
+  tag_build:          <%= @should_tag_build == true %>
+testflight: 
+  api_token:          <%= @api_token %>
+  team_token:         <%= @team_token %>
+  distribution_lists: [<%=@teams.collect{|t| "\"#{t}\""}.join(", ")%>]
