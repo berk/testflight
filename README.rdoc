@@ -13,6 +13,7 @@ Well, you are absolutely right! This gem is going to make your life much easier.
 5. Uploads the IPA file to testflightapp.com
 6. Tags your project with the version and build
 7. Increments your app build number and commits it to the repo
+8. Keeps a log of all your deployments to testflightapp.com in a FLIGHTLOG file
 
 All that with a simple command:
 

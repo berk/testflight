@@ -54,6 +54,8 @@ module Testflight
       
       upload_to_testflightapp(opts)
       
+      append_log_entry(opts)
+
       if Testflight::Config.increment_bundle?
         increment_bundle_version(opts)
         if Testflight::Config.commit_changes?
@@ -155,6 +157,39 @@ module Testflight
 
     def tag_build(opts = {})
       execute("git tag -a #{Testflight::Config.project_version_short} -m 'Release #{Testflight::Config.project_version}'", opts.merge(:ignore_result => true))
+    end
+
+    ####################################################################################
+    ## FlightLog Support
+    ####################################################################################
+    def append_log_entry(opts)
+      lines = []
+      lines << "#{Testflight::Config.application_name} #{Testflight::Config.project_version}"
+      lines << "Deplyed On: #{Time.now}"
+      lines << "Distributed To: #{opts[:teams].join(", ")}"
+      lines << "Notified By Email: #{opts[:notify]}"
+      lines << "Notes: #{opts[:message]}"
+      lines << "---------------------------------------------------------------------------"
+
+      log = "FLIGHTLOG"
+      tmp = log + "~"
+
+      File.open(tmp, "w") do |newfile|
+        lines.each do |line|
+          newfile.puts(line)
+        end
+
+        if File.exist?(log)
+          File.open(log, "r+") do |oldfile|
+            oldfile.each_line do |line| 
+              newfile.puts(line) 
+            end
+          end
+        end
+      end
+
+      File.delete(log) if File.exist?(log)
+      File.rename(tmp, log)
     end
 
     ####################################################################################
