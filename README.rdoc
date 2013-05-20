@@ -1,8 +1,8 @@
 = Introduction
 
-If you are an iOS developer, like me, you probably have dealt with the tedious 
-tasks of manually building, packaging, tagging, commiting and deploying your 
-iOS applications to testflightapp.com. You are probably wondering if there is a better way to do so.
+As an iOS developer you probably have dealt with the tedious 
+tasks of manually building, packaging, tagging, committing and deploying your 
+iOS applications to testflightapp.com. Wouldn't it be great if all that could be done with a single command?
 
 Well, you are absolutely right! This gem is going to make your life much easier. Here is what it does:
 
@@ -37,6 +37,7 @@ This command will ask you a few questions about your project. If you don't like 
   build:
     developer_name:     # This must be your company name or your name as it appears in your .cer from Apple
     increment_bundle:   true  # If you want each deployment to increment your build number
+    sdk:                "iphoneos6.1"
   git:
     commit_changes:     true   # if you are using git and would like to push changes before each build 
     tag_build:          true   # will tag each build in git
