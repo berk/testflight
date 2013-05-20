@@ -75,7 +75,7 @@ module Testflight
     def build_workspace(opts = {})
       cmd = "#{XCODE_BUILDER} -workspace '#{Testflight::Config.workspace_name}' "
       cmd << "-scheme '#{Testflight::Config.application_name}' "
-      cmd << "-sdk 'iphoneos6.0' "
+      cmd << "-sdk '#{Testflight::Config.sdk_version}' "
       cmd << "-configuration 'AdHoc' "
       cmd << "-arch 'armv6 armv7' "
       cmd << "CONFIGURATION_BUILD_DIR='#{Testflight::Config.build_dir}' "

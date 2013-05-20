@@ -41,26 +41,41 @@ module Testflight
       return unless is_project_folder?
 
       say("\r\nConfiguring #{Testflight::Config.application_name} #{Testflight::Config.type} for deployment to testflightapp.com...")
-      say("Please answer the following questions to prepare you for takeoff.")
-
       ["Provisioning", "Distributions", "build"].each do |name| 
         create_folder(name)
       end
 
-      @company_name = ask("\r\nWhat is the name of your company, as it appears in your .cer file from Apple?")
-      @should_increment_bundle = yes?("\r\nWould you like to automatically increment build numbers (bundle value) for every deployment? (y/n)")
+      say("\r\nPlease answer the following questions to prepare you for takeoff.")
 
-      if yes?("\r\nDo you use git as your SCM? (y/n)")
-        @should_commit_changes = yes?("\r\nWould you like to commit and push your changes to git as the first step of your deployment? (y/n)")
+      @company_name = ask("What is the name of your company, as it appears in your .cer file from Apple?")
+      @should_increment_bundle = yes?("Would you like to automatically increment build numbers (bundle value) for every deployment? (y/n)")
+
+      say("\r\nConfiguring Git commands...")
+      if yes?("Do you use git as your SCM? (y/n)")
+        @should_commit_changes = yes?("Would you like to commit and push your changes to git as the first step of your deployment? (y/n)")
         if @should_increment_bundle
-          @should_tag_build = yes?("\r\nWould you like to tag every build in git with the version/build number? (y/n)")
+          @should_tag_build = yes?("Would you like to tag every build in git with the version/build number? (y/n)")
         end
       end
 
-      say("\r\nFor the next question, please get your API TOKEN from the following URL: https://testflightapp.com/account/#api")
+      say("\r\nConfiguring Build commands...")
+      say("What iPhone SDK version are you using?")
+      sdks = [
+        ["1:", "iphoneos4.3"],
+        ["2:", "iphoneos5.0"],
+        ["3:", "iphoneos5.1"],
+        ["4:", "iphoneos6.0"],
+        ["5:", "iphoneos6.1"],
+      ]
+      print_table(sdks)
+      num = ask_for_number(5)
+      @sdk = sdks[num-1].last
+
+      say("\r\nConfiguring Testflight.com commands...")
+      say("For the next question, please get your API TOKEN from the following URL: https://testflightapp.com/account/#api")
       @api_token = ask("Paste your API TOKEN here:")
 
-      say("\r\nFor the next question, please get your TEAM TOKEN from the following URL: https://testflightapp.com/dashboard/team/edit")
+      say("For the next question, please get your TEAM TOKEN from the following URL: https://testflightapp.com/dashboard/team/edit")
       @team_token = ask("Paste your TEAM TOKEN here:")
 
       @teams = ask("\r\nPlease enter your distribution lists as you have set them up on testflight (separate team names with a comma):")
@@ -70,10 +85,11 @@ module Testflight
 
       update_git_ignore
 
-      say("\r\nConfiguration file '.testflight' has been created. You can edit it manually or run the init command again.")
+      say("Configuration file '.testflight' has been created. You can edit it manually or run the init command again.")
       say("\r\nOnly a few steps left, but make sure you do them all.")
-      say("\r\n1). Copy your Ad Hoc Provisioning Profile (.mobileprovision) into the 'Provisioning' folder.")
+      say("1). Copy your Ad Hoc Provisioning Profile (.mobileprovision) into the 'Provisioning' folder.")
       say("2). Create a new build profile called AdHoc and make sure you set it as the default profile for command line builds.")
+      say("3). Make sure that your AdHoc profile uses the AdHoc Provisiong profile you created on Apple. ")
       say("\r\nOnce you are done, you can run: testflight takeoff")
     end
 
@@ -85,7 +101,7 @@ module Testflight
       say("Preparing #{Testflight::Config.application_name} #{Testflight::Config.type} #{Testflight::Config.project_version} for deployment to testflightapp.com...")
 
       @message = ask("\r\nWhat changes did you make in this build?")
-      @teams = ask_with_multiple_options("\r\nWhich team(s) would you like to distirbute the build to? Provide team number(s, separated by a comma)",
+      @teams = ask_with_multiple_options("Which team(s) would you like to distirbute the build to? Provide team number(s, separated by a comma)",
                                          Testflight::Config.distribution_lists)
 
       @notify = yes?("\r\nWould you like to notify the team members by email about this build? (y/n)")
@@ -93,7 +109,7 @@ module Testflight
       Testflight::Builder.new(:message => @message, :teams => @teams, :notify => @notify, :cold => options['cold'])
 
       say("\r\nCongratulations, the build has been deployed! Have a safe flight!")
-      say("")
+      say
     end
 
     protected
@@ -190,6 +206,23 @@ module Testflight
       
       vals
     end
+
+    def ask_for_number(max, opts = {})
+      opts[:message] ||= "Choose: "
+      while true
+        value = ask(opts[:message])
+        if /^[\d]+$/ === value
+          num = value.to_i
+          if num < 1 or num > max
+            say("Hah?")
+          else
+            return num
+          end
+        else
+          say("Hah?")
+        end
+      end
+    end    
 
   end
 end

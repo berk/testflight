@@ -52,6 +52,10 @@ module Testflight
       build["increment_bundle"]
     end
 
+    def self.sdk_version
+      build["sdk"]
+    end
+
     def self.git
       config["git"]
     end
