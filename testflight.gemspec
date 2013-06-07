@@ -20,5 +20,6 @@ Gem::Specification.new do |spec|
   spec.require_path = ['lib', 'lib/testflight']
 
   spec.add_runtime_dependency 'thor', '~> 0.16.0'
+  spec.add_runtime_dependency 'rb-appscript', '~> 0.6.1'
   spec.add_dependency "plist", "~> 3.1.0"
 end
