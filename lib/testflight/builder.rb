@@ -95,7 +95,7 @@ module Testflight
 
     def package_workspace(opts = {})
       cmd = "#{XCODE_PACKAGER} -sdk iphoneos PackageApplication "
-      cmd << "-v '#{Testflight::Config.build_dir}/#{Testflight::Config.application_name}.app' "
+      cmd << "-v '#{Testflight::Config.build_dir}/#{Testflight::Config.build_name}.app' "
       cmd << "-o '#{Testflight::Config.distribution_file}' "
       cmd << "--sign '#{Testflight::Config.developer_name}' "
       cmd << "--embed '#{Testflight::Config.provisioning_dir}/#{Testflight::Config.ad_hoc_provisioning_name}'"
