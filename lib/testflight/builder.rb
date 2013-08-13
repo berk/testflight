@@ -114,7 +114,7 @@ module Testflight
     end
 
     def package_dSYM(opts = {})
-      cmd = "zip -r '#{Testflight::Config.distribution_file}.dSYM.zip' '#{Testflight::Config.distribution_file}.dSYM'"
+      cmd = "zip -r '#{Testflight::Config.build_dir}/#{Testflight::Config.build_name}.app.dSYM.zip' '#{Testflight::Config.build_dir}/#{Testflight::Config.build_name}.app.dSYM'"
       execute(cmd, opts)
     end
 
@@ -125,7 +125,7 @@ module Testflight
     def upload_to_testflightapp(opts = {})
       cmd = "curl #{TESTFLIGHT_ENDPOINT} "
       cmd << "-F file=@#{Testflight::Config.distribution_file} "
-      cmd << "-F dsym=@#{Testflight::Config.distribution_file}.dSYM.zip "
+      cmd << "-F dsym=@#{Testflight::Config.build_dir}/#{Testflight::Config.build_name}.app.dSYM.zip "
       cmd << "-F api_token=#{Testflight::Config.api_token} "
       cmd << "-F team_token=#{Testflight::Config.team_token} "
       cmd << "-F notify=#{opts[:notify]} "
