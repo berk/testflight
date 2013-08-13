@@ -114,6 +114,8 @@ module Testflight
     end
 
     def package_dSYM(opts = {})
+      cmd = "rm '#{Testflight::Config.build_dir}/#{Testflight::Config.build_name}.app.dSYM.zip'"
+      execute(cmd, opts)
       cmd = "zip -r '#{Testflight::Config.build_dir}/#{Testflight::Config.build_name}.app.dSYM.zip' '#{Testflight::Config.build_dir}/#{Testflight::Config.build_name}.app.dSYM'"
       execute(cmd, opts)
     end
