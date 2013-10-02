@@ -79,7 +79,7 @@ module Testflight
       cmd << "-scheme '#{Testflight::Config.application_name}' "
       cmd << "-sdk '#{Testflight::Config.sdk_version}' "
       cmd << "-configuration 'AdHoc' "
-      cmd << "-arch 'armv6 armv7' "
+      cmd << "-arch 'armv7 armv7s' "
       cmd << "CONFIGURATION_BUILD_DIR='#{Testflight::Config.build_dir}' "
       execute(cmd, opts)
     end
