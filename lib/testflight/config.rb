@@ -129,6 +129,10 @@ module Testflight
       end  
     end
 
+    def self.build_name
+      build["name"] || application_name
+    end
+
     def self.build_dir
       "#{project_dir}/build"
     end

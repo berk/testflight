@@ -39,7 +39,7 @@ module Testflight
       if Testflight::Config.commit_changes?
         commit_changes(opts)
       end
-      
+
       if Testflight::Config.tag_build?
         tag_build(opts)
       end
@@ -50,10 +50,12 @@ module Testflight
       else
         build_project(opts)
         package_project(opts)
-      end  
-      
+      end
+
+      package_dSYM(opts)
+
       upload_to_testflightapp(opts)
-      
+
       append_log_entry(opts)
 
       if Testflight::Config.increment_bundle?
@@ -69,7 +71,7 @@ module Testflight
     end
 
     ####################################################################################
-    ## Building Project 
+    ## Building Project
     ####################################################################################
 
     def build_workspace(opts = {})
@@ -77,7 +79,7 @@ module Testflight
       cmd << "-scheme '#{Testflight::Config.application_name}' "
       cmd << "-sdk '#{Testflight::Config.sdk_version}' "
       cmd << "-configuration 'AdHoc' "
-      cmd << "-arch 'armv6 armv7' "
+      cmd << "-arch 'armv7' "
       cmd << "CONFIGURATION_BUILD_DIR='#{Testflight::Config.build_dir}' "
       execute(cmd, opts)
     end
@@ -90,12 +92,12 @@ module Testflight
     end
 
     ####################################################################################
-    ## Packaging Project 
+    ## Packaging Project
     ####################################################################################
 
     def package_workspace(opts = {})
       cmd = "#{XCODE_PACKAGER} -sdk iphoneos PackageApplication "
-      cmd << "-v '#{Testflight::Config.build_dir}/#{Testflight::Config.application_name}.app' "
+      cmd << "-v '#{Testflight::Config.build_dir}/#{Testflight::Config.build_name}.app' "
       cmd << "-o '#{Testflight::Config.distribution_file}' "
       cmd << "--sign '#{Testflight::Config.developer_name}' "
       cmd << "--embed '#{Testflight::Config.provisioning_dir}/#{Testflight::Config.ad_hoc_provisioning_name}'"
@@ -111,13 +113,21 @@ module Testflight
       execute(cmd, opts)
     end
 
+    def package_dSYM(opts = {})
+      cmd = "rm '#{Testflight::Config.build_dir}/#{Testflight::Config.build_name}.app.dSYM.zip'"
+      execute(cmd, opts)
+      cmd = "zip -r '#{Testflight::Config.build_dir}/#{Testflight::Config.build_name}.app.dSYM.zip' '#{Testflight::Config.build_dir}/#{Testflight::Config.build_name}.app.dSYM'"
+      execute(cmd, opts)
+    end
+
     ####################################################################################
-    ## Uploading Project 
+    ## Uploading Project
     ####################################################################################
 
     def upload_to_testflightapp(opts = {})
       cmd = "curl #{TESTFLIGHT_ENDPOINT} "
       cmd << "-F file=@#{Testflight::Config.distribution_file} "
+      cmd << "-F dsym=@#{Testflight::Config.build_dir}/#{Testflight::Config.build_name}.app.dSYM.zip "
       cmd << "-F api_token=#{Testflight::Config.api_token} "
       cmd << "-F team_token=#{Testflight::Config.team_token} "
       cmd << "-F notify=#{opts[:notify]} "
@@ -132,16 +142,16 @@ module Testflight
 
     def increment_bundle_version(opts = {})
       # Check if build numbers are numeric
-      build_number = Testflight::Config.build_number.to_i 
+      build_number = Testflight::Config.build_number.to_i
       build_number += 1
 
       puts("\r\nIncrementing build number to #{build_number}...")
 
       return if opts[:cold]
       Testflight::Config.project_info["CFBundleVersion"] = build_number.to_s
-      
-      File.open(Testflight::Config.project_info_path, "w") do |f| 
-        f.write(Testflight::Config.project_info.to_plist) 
+
+      File.open(Testflight::Config.project_info_path, "w") do |f|
+        f.write(Testflight::Config.project_info.to_plist)
       end
     end
 
@@ -181,8 +191,8 @@ module Testflight
 
         if File.exist?(log)
           File.open(log, "r+") do |oldfile|
-            oldfile.each_line do |line| 
-              newfile.puts(line) 
+            oldfile.each_line do |line|
+              newfile.puts(line)
             end
           end
         end
@@ -205,8 +215,8 @@ module Testflight
       unless result
         puts("Build failed.")
         exit 1
-      end      
-    end    
+      end
+    end
 
   end
 end

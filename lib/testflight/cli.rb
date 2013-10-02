@@ -66,6 +66,7 @@ module Testflight
         ["3:", "iphoneos5.1"],
         ["4:", "iphoneos6.0"],
         ["5:", "iphoneos6.1"],
+        ["6:", "iphoneos7.0"]
       ]
       print_table(sdks)
       num = ask_for_number(5)
