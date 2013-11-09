@@ -1,5 +1,5 @@
 #--
-# Copyright (c) 2012 Michael Berkovich
+# Copyright (c) 2013 Michael Berkovich
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -34,9 +34,7 @@ module Testflight
     end
 
     map 'c' => :checkin
-    map 't' => :takeoff
-
-    desc 'checkin', 'Initializes project configuration file and prepares you for takeoff'
+    desc 'checkin', 'Initializes your project configuration file and prepares it for takeoff'
     def checkin
       return unless is_project_folder?
 
@@ -45,16 +43,16 @@ module Testflight
         create_folder(name)
       end
 
-      say("\r\nPlease answer the following questions to prepare you for takeoff.")
+      say("\r\nPlease answer the following questions to prepare you for takeoff:")
 
       @company_name = ask("What is the name of your company, as it appears in your .cer file from Apple?")
-      @should_increment_bundle = yes?("Would you like to automatically increment build numbers (bundle value) for every deployment? (y/n)")
+      @should_increment_bundle = yes?("Would you like to automatically increment build numbers (bundle value in your app properties) for every deployment? (y/N)")
 
-      say("\r\nConfiguring Git commands...")
-      if yes?("Do you use git as your SCM? (y/n)")
-        @should_commit_changes = yes?("Would you like to commit and push your changes to git as the first step of your deployment? (y/n)")
+      say("\r\nConfiguring SCM commands...")
+      if yes?("Do you use git as your SCM? (y/N)")
+        @should_commit_changes = yes?("Would you like to commit and push your changes to git as the first step of your deployment? (y/N)")
         if @should_increment_bundle
-          @should_tag_build = yes?("Would you like to tag every build in git with the version/build number? (y/n)")
+          @should_tag_build = yes?("Would you like to tag every build in git with the version/build number of your application? (y/N)")
         end
       end
 
@@ -66,19 +64,20 @@ module Testflight
         ["3:", "iphoneos5.1"],
         ["4:", "iphoneos6.0"],
         ["5:", "iphoneos6.1"],
+        ["6:", "iphoneos7.0"],
       ]
       print_table(sdks)
       num = ask_for_number(5)
       @sdk = sdks[num-1].last
 
-      say("\r\nConfiguring Testflight.com commands...")
+      say("\r\nConfiguring testflightapp.com commands...")
       say("For the next question, please get your API TOKEN from the following URL: https://testflightapp.com/account/#api")
       @api_token = ask("Paste your API TOKEN here:")
 
       say("For the next question, please get your TEAM TOKEN from the following URL: https://testflightapp.com/dashboard/team/edit")
       @team_token = ask("Paste your TEAM TOKEN here:")
 
-      @teams = ask("\r\nPlease enter your distribution lists as you have set them up on testflight (separate team names with a comma):")
+      @teams = ask("\r\nPlease enter your distribution lists as you have set them up on testflightapp.com (separate team names with a comma):")
       @teams = @teams.split(",").collect{|t| t.strip}
 
       template 'templates/testflight.yml.erb', "./#{Testflight::Config.path}"
@@ -87,12 +86,12 @@ module Testflight
 
       say("Configuration file '.testflight' has been created. You can edit it manually or run the init command again.")
       say("\r\nOnly a few steps left, but make sure you do them all.")
-      say("1). Copy your Ad Hoc Provisioning Profile (.mobileprovision) into the 'Provisioning' folder.")
-      say("2). Create a new build profile called AdHoc and make sure you set it as the default profile for command line builds.")
-      say("3). Make sure that your AdHoc profile uses the AdHoc Provisiong profile you created on Apple. ")
+      say("1). Copy your Ad Hoc Provisioning Profile (.mobileprovision) into the 'Provisioning' folder that was created earlier.")
+      say("2). Follow the instructions to setup your XCode project, found here: http://help.testflightapp.com/customer/portal/articles/1333914-how-to-create-an-ipa-xcode-5-")
       say("\r\nOnce you are done, you can run: testflight takeoff")
     end
 
+    map 't' => :takeoff
     desc 'takeoff', 'Builds and deploys your project based on your configuration.'
     method_option :cold, :type => :boolean, :aliases => "c", :required => false
     def takeoff
@@ -100,11 +99,11 @@ module Testflight
 
       say("Preparing #{Testflight::Config.application_name} #{Testflight::Config.type} #{Testflight::Config.project_version} for deployment to testflightapp.com...")
 
-      @message = ask("\r\nWhat changes did you make in this build?")
+      @message = ask("\r\nWhat changes did you make in this build? (will be used in git commit)")
       @teams = ask_with_multiple_options("Which team(s) would you like to distirbute the build to? Provide team number(s, separated by a comma)",
                                          Testflight::Config.distribution_lists)
 
-      @notify = yes?("\r\nWould you like to notify the team members by email about this build? (y/n)")
+      @notify = yes?("\r\nWould you like to notify the team members by email about this build? (y/N)")
       
       Testflight::Builder.new(:message => @message, :teams => @teams, :notify => @notify, :cold => options['cold'])
 

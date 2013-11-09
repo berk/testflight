@@ -21,7 +21,6 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
 
-require 'appscript'
 require 'yaml'
 
 module Testflight
@@ -30,8 +29,6 @@ module Testflight
     XCODE_BUILDER       = "/usr/bin/xcodebuild"
     XCODE_PACKAGER      = "/usr/bin/xcrun"
     TESTFLIGHT_ENDPOINT = "http://testflightapp.com/api/builds.json"
-
-    include Appscript
 
     def initialize(opts = {})
       t0 = Time.now
@@ -48,6 +45,7 @@ module Testflight
         build_workspace(opts)
         package_workspace(opts)
       else
+        clean_project(opts)
         build_project(opts)
         package_project(opts)
       end  
@@ -82,10 +80,20 @@ module Testflight
       execute(cmd, opts)
     end
 
+    def clean_project(opts = {})
+      cmd = "#{XCODE_BUILDER} -project '#{Testflight::Config.application_name}.xcodeproj' "
+      cmd << "-configuration 'Release' "
+      cmd << "-alltargets clean "
+      execute(cmd, opts)
+    end
+
     def build_project(opts = {})
-      cmd = "#{XCODE_BUILDER} -target '#{Testflight::Config.application_name}' "
-      cmd << "-sdk 'iphoneos6.0' "
-      cmd << "-configuration 'AdHoc' "
+      cmd = "#{XCODE_BUILDER} -project '#{Testflight::Config.application_name}.xcodeproj' "
+      cmd << "-arch armv7 "
+      cmd << "-target '#{Testflight::Config.application_name}' "
+      cmd << "-configuration 'Release' "
+      cmd << "-sdk 'iphoneos' "
+      cmd << "build VALID_ARCHS='armv7' "
       execute(cmd, opts)
     end
 
@@ -104,7 +112,7 @@ module Testflight
 
     def package_project(opts = {})
       cmd = "#{XCODE_PACKAGER} -sdk iphoneos PackageApplication "
-      cmd << "-v '#{Testflight::Config.build_dir}/AdHoc-iphoneos/#{Testflight::Config.application_name}.app' "
+      cmd << "-v '#{Testflight::Config.build_dir}/Release-iphoneos/#{Testflight::Config.application_name}.app' "
       cmd << "-o '#{Testflight::Config.distribution_file}' "
       cmd << "--sign '#{Testflight::Config.developer_name}' "
       cmd << "--embed '#{Testflight::Config.provisioning_dir}/#{Testflight::Config.ad_hoc_provisioning_name}'"
