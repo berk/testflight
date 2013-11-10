@@ -63,18 +63,18 @@ This command will ask you a few questions about your project, which will result 
 If you don't like being asked questions and prefer to configure your project manually, just create a .tesflight file yourself and provide the following information:
 
   build:
-    developer_name:     "My Company Inc"  # This must be your company name or your name as it appears in your .cer from Apple
-    increment_bundle:   true              # If you want each deployment to increment your build number
+    developer_name:     "My Company Inc"     # Must match your company name as it appears in your .cer from Apple
+    increment_bundle:   true                 # Increments your build number
     architecture:       armv7
-    configuration:   	  Release           # In Xcode 5, it must be set to release
+    configuration:      Release              # In Xcode 5, it must be set to Release
     sdk:                iphoneos
   git:
-    commit_changes:     true   # if you are using git and would like to push changes before each build 
-    tag_build:          true   # will tag each build in git
+    commit_changes:     true                 # If you want to commit changes before each build 
+    tag_build:          true                 # Will tag each build in git
   testflight: 
     api_token:          "abcdefghijklmnop"   # Get it from https://testflightapp.com/account/#api
     team_token:         "abcdefghijklmnop"   # Get it from https://testflightapp.com/dashboard/team/edit/
-    distribution_lists: ["Developers", "Testers", "Everyone"] # Configure your distribution lists at https://testflightapp.com
+    distribution_lists: ["Developers", "Testers", "Everyone"]  # Configure your lists at https://testflightapp.com
 
 
 = Execution
@@ -86,6 +86,30 @@ Go to your project folder and simply type:
    $ testflight takeoff
 
 Have a safe flight!
+
+
+                                                                                        
+                                                                                        
+                                                                  ___.----.____         
+                                                           __,--(_,-'       ,-'         
+                                                       _,-'               ,-'           
+                                                   _,-'   ()           ,-'              
+                                                ,-'    ()           ,-'                 
+                                             ,-'    ()           ,-'                    
+                                          ,-'  __..--''       ,-'                       
+                                       ,-'.--''   ,-'      ,-'                          
+                    |\\         __..--''        ,-'      ,-':                           
+                    | \\__..--''     ______  ,-'     _,-'   :                           
+               __..--''         ,-'\\_____/-'    _,-'       :                           
+      __..--''               ,-' ,-'  ,-'   _,-'____/      :                            
+      `---...___          ,-' ,-'  ,-'  _,-'    _,-'       :                            
+                ``````-,-' ,-'  ,-' _,-'    _,-'           :                            
+                       \\,-'___,-'--''___,-'-...___         :                           
+                                                   ```---..:                            
+                                                                                        
+                                                                                        
+                                                                                        
+                                                                                        
 
 
 = Authors
