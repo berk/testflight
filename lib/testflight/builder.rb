@@ -63,7 +63,7 @@ module Testflight
 
       t1 = Time.now
 
-      puts("Build took #{t1-t0} seconds.")
+      puts("\n\nBuild took #{t1-t0} seconds.")
     end
 
     ####################################################################################
@@ -82,18 +82,18 @@ module Testflight
 
     def clean_project(opts = {})
       cmd = "#{XCODE_BUILDER} -project '#{Testflight::Config.application_name}.xcodeproj' "
-      cmd << "-configuration 'Release' "
+      cmd << "-configuration '#{Testflight::Config.configuration}' "
       cmd << "-alltargets clean "
       execute(cmd, opts)
     end
 
     def build_project(opts = {})
       cmd = "#{XCODE_BUILDER} -project '#{Testflight::Config.application_name}.xcodeproj' "
-      cmd << "-arch armv7 "
+      cmd << "-arch #{Testflight::Config.architecture} "
       cmd << "-target '#{Testflight::Config.application_name}' "
-      cmd << "-configuration 'Release' "
-      cmd << "-sdk 'iphoneos' "
-      cmd << "build VALID_ARCHS='armv7' "
+      cmd << "-configuration '#{Testflight::Config.configuration}' "
+      cmd << "-sdk '#{Testflight::Config.sdk}' "
+      cmd << "build VALID_ARCHS='#{Testflight::Config.architecture}' "
       execute(cmd, opts)
     end
 
@@ -211,9 +211,8 @@ module Testflight
       return if opts[:ignore_result]
 
       unless result
-        puts("Build failed.")
-        exit 1
-      end      
+        raise "Build failed"
+      end
     end    
 
   end

@@ -38,46 +38,69 @@ module Testflight
     def checkin
       return unless is_project_folder?
 
-      say("\r\nConfiguring #{Testflight::Config.application_name} #{Testflight::Config.type} for deployment to testflightapp.com...")
+      say("\n\n")
+      say("                                                                           \n")
+      say("                        TEST FLIGHT CHECK-IN                               \n")
+      say("                                                                           \n")
+      say("                                                                           \n")
+      say("  \\----------------------------------\\                                   \n")
+      say("   \\                                  \\        __                        \n")
+      say("    \\   Please proceed with your       \\       | \\                      \n")
+      say("     >  check-in by answering the       >------|  \\        ______         \n")
+      say("    /   following questions:           /       --- \\_____/**|_|_\\____  | \n")
+      say("   /                                  /          \\_______ --------- __>-} \n")
+      say("  /----------------------------------/              /  \\_____|_____/   |  \n")
+      say("                                                   *         |             \n")
+      say("                                                            {O}            \n")
+      say("                                                                           \n")
+      say("                                                                           \n")
+      say("    /*\\       /*\\       /*\\       /*\\       /*\\       /*\\       /*\\ \n")
+      say("   |***|     |***|     |***|     |***|     |***|     |***|     |***|       \n")
+      say("    \\*/       \\*/ ____  \\*/       \\*/       \\*/       \\*/       \\*/ \n")
+      say("     |         |  |  |   |         |         |         |         |         \n")
+      say("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^  \n")
+      say("^^^^^^^^^ art by Denis Rabusseau, rabussea@jack.greco-prog.fr ^^^^^^^^^^^  \n")
+      say("\n\n")
+
+
+      say("\nConfiguring #{Testflight::Config.application_name} #{Testflight::Config.type} for deployment to testflightapp.com...")
       ["Provisioning", "Distributions", "build"].each do |name| 
         create_folder(name)
       end
 
-      say("\r\nPlease answer the following questions to prepare you for takeoff:")
+      @company_name = ask("\nWhat is the name of your company, as it appears in your Apple certificate?")
+      @should_increment_bundle = yes_no?("Would you like to automatically increment the build number after every deployment?", "Y")
 
-      @company_name = ask("What is the name of your company, as it appears in your .cer file from Apple?")
-      @should_increment_bundle = yes?("Would you like to automatically increment build numbers (bundle value in your app properties) for every deployment? (y/N)")
-
-      say("\r\nConfiguring SCM commands...")
-      if yes?("Do you use git as your SCM? (y/N)")
-        @should_commit_changes = yes?("Would you like to commit and push your changes to git as the first step of your deployment? (y/N)")
+      if File.exist?("./.git")
+        say("\nIt looks like you are using git as your SCM.")
+        @should_commit_changes = yes_no?("Would you like to commit and push your changes to git before deployment?", "N")
         if @should_increment_bundle
-          @should_tag_build = yes?("Would you like to tag every build in git with the version/build number of your application? (y/N)")
+          @should_tag_build = yes_no?("Would you like to tag every build in git with the version/build number of your application?", "Y")
         end
       end
 
-      say("\r\nConfiguring Build commands...")
-      say("What iPhone SDK version are you using?")
-      sdks = [
-        ["1:", "iphoneos4.3"],
-        ["2:", "iphoneos5.0"],
-        ["3:", "iphoneos5.1"],
-        ["4:", "iphoneos6.0"],
-        ["5:", "iphoneos6.1"],
-        ["6:", "iphoneos7.0"],
-      ]
-      print_table(sdks)
-      num = ask_for_number(5)
-      @sdk = sdks[num-1].last
+      #say("\r\nConfiguring Build commands...\n")
+      #say("What iOS architecture are you using?")
+      #architectures = [
+      #  ["1:", "armv5"],
+      #  ["2:", "armv6"],
+      #  ["3:", "armv7"],
+      #]
+      #print_table(architectures)
+      #num = ask_for_number(3)
+      #@architecture = architectures[num-1].last
+      @architecture = 'armv7'
+      @configuration = 'Release'
+      @sdk = 'iphoneos'
 
       say("\r\nConfiguring testflightapp.com commands...")
-      say("For the next question, please get your API TOKEN from the following URL: https://testflightapp.com/account/#api")
+      say("Please get your API TOKEN from the following URL: https://testflightapp.com/account/#api")
       @api_token = ask("Paste your API TOKEN here:")
 
-      say("For the next question, please get your TEAM TOKEN from the following URL: https://testflightapp.com/dashboard/team/edit")
+      say("Please get your TEAM TOKEN from the following URL: https://testflightapp.com/dashboard/team/edit")
       @team_token = ask("Paste your TEAM TOKEN here:")
 
-      @teams = ask("\r\nPlease enter your distribution lists as you have set them up on testflightapp.com (separate team names with a comma):")
+      @teams = ask("\r\nPlease enter your distribution lists as they appear on testflightapp.com (separated with comma):")
       @teams = @teams.split(",").collect{|t| t.strip}
 
       template 'templates/testflight.yml.erb', "./#{Testflight::Config.path}"
@@ -87,7 +110,7 @@ module Testflight
       say("Configuration file '.testflight' has been created. You can edit it manually or run the init command again.")
       say("\r\nOnly a few steps left, but make sure you do them all.")
       say("1). Copy your Ad Hoc Provisioning Profile (.mobileprovision) into the 'Provisioning' folder that was created earlier.")
-      say("2). Follow the instructions to setup your XCode project, found here: http://help.testflightapp.com/customer/portal/articles/1333914-how-to-create-an-ipa-xcode-5-")
+      say("2). Make sure your Release configuration uses your Ad-Hoc profile. You can follow these instructions to learn more: http://help.testflightapp.com/customer/portal/articles/1333914-how-to-create-an-ipa-xcode-5-")
       say("\r\nOnce you are done, you can run: testflight takeoff")
     end
 
@@ -97,22 +120,104 @@ module Testflight
     def takeoff
       return unless ready_for_takeoff?
 
-      say("Preparing #{Testflight::Config.application_name} #{Testflight::Config.type} #{Testflight::Config.project_version} for deployment to testflightapp.com...")
 
-      @message = ask("\r\nWhat changes did you make in this build? (will be used in git commit)")
+      say("\n\n")
+      say("              _______                                                                 \n")
+      say("              \\=====/                                                                \n")
+      say("                |||                                                                   \n")
+      say("                 #                                                                    \n")
+      say("                 |                                                                    \n")
+      say("    ===========================                                                       \n")
+      say("    |  www.testflightapp.com  |                                                       \n")
+      say("    ===========================                                                       \n")
+      say("    \\        |       |        /                                                      \n")
+      say("     \\       |       |       /                                                       \n")
+      say("      \\      |       |      /                                                        \n")
+      say("       \\     |       |     /                                                         \n")
+      say("        ###################                                                           \n")
+      say("        ||               ||                                                           \n")
+      say("        ||               ||                                                           \n")
+      say("        ||               ||                                                           \n")
+      say("        ||               ||                                                           \n")
+      say("        ||               ||                                                           \n")
+      say("        ||               ||          ___                                              \n")
+      say("        ||               ||           | \\______________                              \n")
+      say("        ||  ####         ||          ====( oooooooooo  O\\__                          \n")
+      say("        ||  #  #         ||           (________/=====>______)--                       \n")
+      say("        ||  #  #         ||                     OO        O                           \n")
+      say("===================================================================================== \n")
+      say(" art by Ian Astley, astley@Papin.HRZ.Uni-Marburg.DE                                   \n")
+      say("\n\n")
+
+      say("Preparing #{Testflight::Config.application_name} #{Testflight::Config.type} #{Testflight::Config.project_version} for departure to testflightapp.com...")
+
+
+      @message = ask("\r\nWhat changes did you make in this build (will be used in git commit and notes)?")
       @teams = ask_with_multiple_options("Which team(s) would you like to distirbute the build to? Provide team number(s, separated by a comma)",
                                          Testflight::Config.distribution_lists)
 
-      @notify = yes?("\r\nWould you like to notify the team members by email about this build? (y/N)")
+      @notify = yes_no?("\r\nWould you like to notify the team members by email about this build?", "N")
       
       Testflight::Builder.new(:message => @message, :teams => @teams, :notify => @notify, :cold => options['cold'])
 
-      say("\r\nCongratulations, the build has been deployed! Have a safe flight!")
+      say("                                                                                  \n")
+      say("                                                                                  \n")
+      say("                                                            ___.----.____         \n")
+      say("                                                     __,--(_,-'       ,-'         \n")
+      say("                                                 _,-'               ,-'           \n")
+      say("                                             _,-'   ()           ,-'              \n")
+      say("                                          ,-'    ()           ,-'                 \n")
+      say("                                       ,-'    ()           ,-'                    \n")
+      say("                                    ,-'  __..--''       ,-'                       \n")
+      say("                                 ,-'.--''   ,-'      ,-'                          \n")
+      say("              |\\         __..--''        ,-'      ,-':                           \n")
+      say("              | \\__..--''     ______  ,-'     _,-'   :                           \n")
+      say("         __..--''         ,-'\\_____/-'    _,-'       :                           \n")
+      say("__..--''               ,-' ,-'  ,-'   _,-'____/      :                            \n")
+      say("`---...___          ,-' ,-'  ,-'  _,-'    _,-'       :                            \n")
+      say("          ``````-,-' ,-'  ,-' _,-'    _,-'           :                            \n")
+      say("                 \\,-'___,-'--''___,-'-...___         :                           \n")
+      say("                                             ```---..:                            \n")
+      say("                                                                                  \n")
+      say("                                                                                  \n")
+      say("                                                                                  \n")
+      say("                                                                                  \n")
+
+      say("\r\nCongratulations, your build has been departed! Have a safe flight!")
       say
+    rescue
+
+      say("                                                                                  \n")
+      say("                                                                                  \n")
+      say("                                                                                  \n")
+      say("                         .-------------------.              ___                   \n")
+      say("                        (       OUCH !!!      )            /  /]                  \n")
+      say("                         `--------------   --'            /  / ]                  \n")
+      say("                                        \\ |      _____,.-'  /__]                 \n")
+      say("                                     )   \\|   ,-'             _>                 \n")
+      say("                                       (  ` _/            ,.-'`                   \n")
+      say("                                      )    / |     _,.-'``                        \n")
+      say("                                      (   /. /    |                               \n")
+      say("                                       ) ,  /`  ./                                \n")
+      say("                                      (  \\_/   //  _                             \n")
+      say("                                       ) /    //==(_)                             \n")
+      say("                                     _,~'#   (/.                                  \n")
+      say("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#~~#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n")
+      say("                                                                                  \n")
+
+      say("\r\nBuild failed")
     end
 
     protected
-    
+
+    def yes_no?(question, default = "Y")
+      answer = ask("#{question} #{default ? "(Y/n)" : "(y/N)"}")
+      if default == "Y"
+        return (["Y", "y", "yes", "YES", "Yes", ""].include?(answer))
+      end
+      (["N", "n", "no", "NO", "No", ""].include?(answer))
+    end
+
     def is_project_folder?
       unless Testflight::Config.application_name
         say("This folder does not contain an xCode project or a workspace.")

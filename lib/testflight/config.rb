@@ -56,6 +56,18 @@ module Testflight
       build["sdk"]
     end
 
+    def self.architecture
+      build["architecture"]
+    end
+
+    def self.configuration
+      build["configuration"]
+    end
+
+    def self.sdk
+      build["sdk"]
+    end
+
     def self.git
       config["git"]
     end
