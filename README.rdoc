@@ -1,18 +1,41 @@
+
+     \----------------------------------\
+      \                                  \        __
+       \   The best way to build and      \       | \
+        >   deploy your iOS apps to:       >------|  \       ______  
+       /     www.testflightapp.com        /       --- \_____/**|_|_\____  |
+      /                                  /          \_______ --------- __>-}
+     /----------------------------------/              /  \_____|_____/   |
+                                                     *         |
+                                                              {O}
+
+
+
+     /*\       /*\                /*\       /*\          /*\            /*\            /*\
+    |***|     |***|              |***|     |***|        |***|          |***|          |***|
+     \*/       \*/    ____        \*/       \*/          \*/            \*/            \*/
+      |         |     |  |         |         |            |              |              |
+  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^															 
+  art by Denis Rabusseau, rabussea@jack.greco-prog.fr 
+
+
 = Introduction
 
-As an iOS developer you probably have dealt with the tedious 
-tasks of manually building, packaging, tagging, committing and deploying your 
-iOS applications to testflightapp.com. Wouldn't it be great if all that could be done with a single command?
+If you have ever developed an iOS app, you most likely have had to deal with the tedious tasks of manually building, packaging, 
+checking in, tagging, and distributing your iOS applications to your testers through testflightapp.com. 
 
-Well, you are absolutely right! This gem is going to make your life much easier. Here is what it does:
+If you haven't, i would highly recommend you do this, at least once, manually! Then you would truly be able to appreciate this gem. ;)
 
-1. Reads your XCode project info file to get your app version and build number 
-2. Commits all your changes to the git repository
+
+This gem is going to make your life much easier. Here is what it does:
+
+1. Reads your Xcode project file to determine your app version and build number 
+2. Optionally, commits all your changes to the git repository (by, first, asking you about what has changed)
 3. Builds your project (or workspace)
 4. Packages your application into an IPA file
 5. Uploads the IPA file to testflightapp.com
-6. Tags your project with the version and build
-7. Increments your app build number and commits it to the repo
+6. Optinally, tags your project with the version and the build
+7. Optionally, increments your app build number and commits it to the repo
 8. Keeps a log of all your deployments to testflightapp.com in a FLIGHTLOG file
 
 All that with a simple command:
@@ -32,28 +55,39 @@ To setup your project with the deployment script, run the following command from
 
   $ testflight checkin
 
-This command will ask you a few questions about your project. If you don't like being asked questions and prefer to configure your project manually, just create a .tesflight file in your Xcode project folder and provide the following information:
+This command will ask you a few questions about your project, which will result in creation of .tesflight file in your project folder. 
+
+If you don't like being asked questions and prefer to configure your project manually, just create a .tesflight file yourself and provide the following information:
 
   build:
-    developer_name:     # This must be your company name or your name as it appears in your .cer from Apple
-    increment_bundle:   true  # If you want each deployment to increment your build number
-    sdk:                "iphoneos6.1"
+    developer_name:     "My Company Inc"  # This must be your company name or your name as it appears in your .cer from Apple
+    increment_bundle:   true              # If you want each deployment to increment your build number
+    architecture:       armv7
+    configuration:   	  Release           # In Xcode 5, it must be set to release
+    sdk:                iphoneos
   git:
     commit_changes:     true   # if you are using git and would like to push changes before each build 
     tag_build:          true   # will tag each build in git
   testflight: 
-    api_token:          # Get it from https://testflightapp.com/account/#api
-    team_token:         # Get it from https://testflightapp.com/dashboard/team/edit/
-    distribution_lists: ["Internal", "Everyone"] # Configure your distribution lists at https://testflightapp.com
+    api_token:          "abcdefghijklmnop"   # Get it from https://testflightapp.com/account/#api
+    team_token:         "abcdefghijklmnop"   # Get it from https://testflightapp.com/dashboard/team/edit/
+    distribution_lists: ["Developers", "Testers", "Everyone"] # Configure your distribution lists at https://testflightapp.com
 
 
 = Execution
 
-Once you have checked in (you only need to do it once per project), you are ready for takeoff. Go to your project folder and simply type:
+Once you have checked in (which is done only once per project), you are ready for takeoff. 
+
+Go to your project folder and simply type:
 
    $ testflight takeoff
 
 Have a safe flight!
+
+
+= Authors
+
+Michael Berkovich
 
 
 = Contribution
