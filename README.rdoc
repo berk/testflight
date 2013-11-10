@@ -23,7 +23,7 @@
 If you have ever developed an iOS app, you most likely have had to deal with the tedious tasks of manually building, packaging, 
 checking in, tagging, and distributing your iOS applications to your testers through testflightapp.com. 
 
-If you haven't, i would highly recommend you do this, at least once, manually! Then you would truly be able to appreciate this gem. ;)
+If you haven't, i would highly recommend you do this, at least once, manually! Then you would truly be able to appreciate this gem.
 
 
 This gem is going to make your life much easier. Here is what it does:
