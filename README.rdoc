@@ -39,7 +39,7 @@ This gem is going to make your life much easier. Here is what it does:
 
 All that with a simple command:
 
-$ testflight takeoff
+  $ testflight takeoff
 
 
 
