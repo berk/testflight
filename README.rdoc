@@ -1,4 +1,3 @@
-
      \----------------------------------\
       \                                  \        __
        \   The best way to build and      \       | \
@@ -47,6 +46,10 @@ $ testflight takeoff
 = Installation
 
   gem install testflight
+
+if you are using rbenv, you might need to run:
+
+  $ rbenv rehash
 
 
 = Configuration
