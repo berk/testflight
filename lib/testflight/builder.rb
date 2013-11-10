@@ -44,12 +44,14 @@ module Testflight
       if Testflight::Config.workspace?
         build_workspace(opts)
         package_workspace(opts)
+        package_workspace_dSYM(opts)
       else
         clean_project(opts)
         build_project(opts)
         package_project(opts)
-      end  
-      
+        package_project_dSYM(opts)
+      end
+
       upload_to_testflightapp(opts)
       
       append_log_entry(opts)
@@ -74,8 +76,8 @@ module Testflight
       cmd = "#{XCODE_BUILDER} -workspace '#{Testflight::Config.workspace_name}' "
       cmd << "-scheme '#{Testflight::Config.application_name}' "
       cmd << "-sdk '#{Testflight::Config.sdk_version}' "
-      cmd << "-configuration 'AdHoc' "
-      cmd << "-arch 'armv6 armv7' "
+      cmd << "-configuration '#{Testflight::Config.configuration}' "
+      cmd << "-arch '#{Testflight::Config.architecture}' "
       cmd << "CONFIGURATION_BUILD_DIR='#{Testflight::Config.build_dir}' "
       execute(cmd, opts)
     end
@@ -103,19 +105,29 @@ module Testflight
 
     def package_workspace(opts = {})
       cmd = "#{XCODE_PACKAGER} -sdk iphoneos PackageApplication "
-      cmd << "-v '#{Testflight::Config.build_dir}/#{Testflight::Config.application_name}.app' "
+      cmd << "-v '#{Testflight::Config.build_dir}/#{Testflight::Config.build_name}.app' "
       cmd << "-o '#{Testflight::Config.distribution_file}' "
       cmd << "--sign '#{Testflight::Config.developer_name}' "
       cmd << "--embed '#{Testflight::Config.provisioning_dir}/#{Testflight::Config.ad_hoc_provisioning_name}'"
       execute(cmd, opts)
     end
 
+    def package_workspace_dSYM(opts = {})
+      cmd = "zip -r '#{Testflight::Config.distribution_dsym_file}' '#{Testflight::Config.build_dir}/#{Testflight::Config.build_name}.app.dSYM'"
+      execute(cmd, opts)
+    end
+
     def package_project(opts = {})
       cmd = "#{XCODE_PACKAGER} -sdk iphoneos PackageApplication "
-      cmd << "-v '#{Testflight::Config.build_dir}/Release-iphoneos/#{Testflight::Config.application_name}.app' "
+      cmd << "-v '#{Testflight::Config.release_dir}/#{Testflight::Config.application_name}.app' "
       cmd << "-o '#{Testflight::Config.distribution_file}' "
       cmd << "--sign '#{Testflight::Config.developer_name}' "
       cmd << "--embed '#{Testflight::Config.provisioning_dir}/#{Testflight::Config.ad_hoc_provisioning_name}'"
+      execute(cmd, opts)
+    end
+
+    def package_project_dSYM(opts = {})
+      cmd = "zip -r '#{Testflight::Config.distribution_dsym_file}' '#{Testflight::Config.release_dir}/#{Testflight::Config.build_name}.app.dSYM'"
       execute(cmd, opts)
     end
 
@@ -126,6 +138,7 @@ module Testflight
     def upload_to_testflightapp(opts = {})
       cmd = "curl #{TESTFLIGHT_ENDPOINT} "
       cmd << "-F file=@#{Testflight::Config.distribution_file} "
+      cmd << "-F dsym=@#{Testflight::Config.distribution_dsym_file} "
       cmd << "-F api_token=#{Testflight::Config.api_token} "
       cmd << "-F team_token=#{Testflight::Config.team_token} "
       cmd << "-F notify=#{opts[:notify]} "

@@ -44,6 +44,10 @@ module Testflight
       config["build"]
     end
 
+    def self.build_name
+      build["name"] || application_name
+    end
+
     def self.developer_name
       build["developer_name"]
     end
@@ -99,6 +103,10 @@ module Testflight
     ##################################################
     ## Helper Methods
     ##################################################
+
+    def self.release_dir
+      "#{build_dir}/#{configuration}-iphoneos"
+    end
 
     def self.project_dir
       Dir.pwd
@@ -162,6 +170,10 @@ module Testflight
 
     def self.distribution_file
       "#{distributions_dir}/#{application_name}_#{project_version_short}.ipa"
+    end
+
+    def self.distribution_dsym_file
+      "#{distributions_dir}/#{application_name}_#{project_version_short}.app.dSYM.zip"
     end
 
     def self.project_info_file_name
