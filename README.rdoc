@@ -139,6 +139,59 @@ Have a safe flight!
                                                                                         
 
 
+
+= Bonus
+
+If you like browsing Github, finding, downloading and copying iOS libraries into your own project folder, then manually linking them,
+etc.., keep doing that and skip this section. 
+
+If the above task drives you crazy, then you got to try CocoaPods! http://cocoapods.org
+
+It is a pretty awesome framework for "managing library dependencies in Objective-C projects".
+
+Here is how you can try it out:
+
+Visit cocoapods.org and follow the instructions on how to install it. Basically, just: 
+  
+  $ gem install cocoapods
+  $ pod setup
+  
+Most of the COOL libraries are already available on CocoaPods. So search and find whatever you need.
+
+Create a new iOS project in Xcode.
+
+cd into the project folder and create a file name "Podfile". Enter the following:
+
+  platform :ios, '7.0'
+  pod 'Reachability', '~> 3.1.1'
+  pod "AFNetworking", "~> 2.0"
+
+Install the pods you just mentioned by executing:
+
+  $ pod install 
+  
+Notice that when you created a project earlier, you just had a project file in your folder, but now you have a workspace file.
+From this point on, always use the workspace file to open your projects. Rest assure, tesflight gem knows that too.
+
+Run the checkin command: 
+  
+  $ testflight checkin
+
+Run the takeoff command: 
+
+  $ testflight takeoff
+  
+  
+Now you are all set to build the best app on the App Store. 
+
+You are now using a pretty amazing managing dependencies framweork for embedding third party libraries into your app.
+And you are also using an amazing service, tesflightapp.com, for distributing your app to your testers. (Don't forget to check out the FlightPath product).
+
+And, well, you are using this cool gem to glue it all together.
+
+Enjoy!
+
+
 = Authors
 
 Michael Berkovich
