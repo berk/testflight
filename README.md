@@ -24,7 +24,6 @@ Introduction
 ![Project status](http://stillmaintained.com/berk/testflight.png) 
 &nbsp; ![Gem version](http://badge.fury.io/rb/testflight.png)
 
-
 If you ever developed an iOS app, you most likely had to deal with the tedious tasks of manually building, packaging, 
 checking in, tagging, and distributing your iOS application to your testers through testflightapp.com. 
 
