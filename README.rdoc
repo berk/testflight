@@ -20,7 +20,7 @@
 
 = Introduction
 
-http://stillmaintained.com/berk/testflight.png
+http://stillmaintained.com/berk/testflight.png  
 http://badge.fury.io/rb/testflight.png
 
 If you ever developed an iOS app, you most likely had to deal with the tedious tasks of manually building, packaging, 
