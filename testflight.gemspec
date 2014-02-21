@@ -13,6 +13,7 @@ Gem::Specification.new do |spec|
   spec.homepage    = "https://github.com/berk/testflight"
   spec.summary     = "iOS application deployment automation"
   spec.description = "Mechanism for building, packaging, tagging and deploying Xcode projects to testflightapp.com"
+  spec.license     = 'MIT'
  
   spec.files        = Dir.glob("{bin,lib}/**/*") + %w(LICENSE README.rdoc)
   spec.executables  = spec.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
