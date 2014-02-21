@@ -14,14 +14,16 @@
     |***|     |***|            |***|     |***|     |***|          |***|      |***|
      \*/       \*/    ____      \*/       \*/       \*/            \*/        \*/
       |         |     |  |       |         |         |              |          |
-  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^															 
-  art by Denis Rabusseau, rabussea@jack.greco-prog.fr 
+     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^						
+     art by Denis Rabusseau, rabussea@jack.greco-prog.fr 
 
 
-= Introduction
+Introduction
+=====
 
-http://stillmaintained.com/berk/testflight.png  
-http://badge.fury.io/rb/testflight.png
+![Project status](http://stillmaintained.com/berk/testflight.png) 
+&nbsp; ![Gem version](http://badge.fury.io/rb/testflight.png)
+
 
 If you ever developed an iOS app, you most likely had to deal with the tedious tasks of manually building, packaging, 
 checking in, tagging, and distributing your iOS application to your testers through testflightapp.com. 
@@ -42,21 +44,22 @@ This gem is going to make your life much easier, hopefully. Here is what it does
 
 All that with a simple command:
 
-  $ testflight takeoff
+     $ testflight takeoff
 
 
 
-= Installation
+Installation
+=====
 
-  gem install testflight
+     gem install testflight
 
 if you are using rbenv, you might need to run:
 
-  $ rbenv rehash
+     $ rbenv rehash
   
 
-= Configuration
-  
+Configuration
+=====  
   
 
                  _______                                                                 
@@ -82,40 +85,41 @@ if you are using rbenv, you might need to run:
            ||  ####         ||          ====( oooooooooo  O\__                          
            ||  #  #         ||           (________/=====>______)--                       
            ||  #  #         ||                     OO        O                           
-   --------------------------------------------------------------------------------
+     --------------------------------------------------------------------------------
 
 
 
 To setup your project with the deployment script, run the following command from within your Xcode project folder:
 
-  $ testflight checkin
+     $ testflight checkin
 
 This command will ask you a few questions about your project, which will result in creation of .tesflight file in your project folder. 
 
 If you don't like being asked questions and prefer to configure your project manually, just create a .tesflight file yourself and provide the following information:
 
-  build:
-    developer_name:     "My Company Inc"     # Must match your company name as it appears in your .cer from Apple
-    increment_bundle:   true                 # Increments your build number
-    architecture:       armv7
-    configuration:      Release              # In Xcode 5, it must be set to Release
-    sdk:                iphoneos
-  git:
-    commit_changes:     true                 # If you want to commit changes before each build 
-    tag_build:          true                 # Will tag each build in git
-  testflight: 
-    api_token:          "abcdefghijklmnop"   # Get it from https://testflightapp.com/account/#api
-    team_token:         "abcdefghijklmnop"   # Get it from https://testflightapp.com/dashboard/team/edit/
-    distribution_lists: ["Developers", "Testers", "Everyone"]  # Configure your lists at https://testflightapp.com
+     build:
+          developer_name:     "My Company Inc"     # Must match your company name as it appears in your .cer from Apple
+          increment_bundle:   true                 # Increments your build number
+          architecture:       armv7
+          configuration:      Release              # In Xcode 5, it must be set to Release
+          sdk:                iphoneos
+     git:
+          commit_changes:     true                 # If you want to commit changes before each build 
+          tag_build:          true                 # Will tag each build in git
+     testflight: 
+          api_token:          "abcdefghijklmnop"   # Get it from https://testflightapp.com/account/#api
+          team_token:         "abcdefghijklmnop"   # Get it from https://testflightapp.com/dashboard/team/edit/
+          distribution_lists: ["Developers", "Testers", "Everyone"]  # Configure your lists at https://testflightapp.com
 
 
-= Execution
+Execution
+=====
 
 Once you have checked in (which is done only once per project), you are ready for takeoff. 
 
 Go to your project folder and simply type:
 
-   $ testflight takeoff
+     $ testflight takeoff
 
 Have a safe flight!
 
@@ -143,7 +147,8 @@ Have a safe flight!
 
 
 
-= Bonus
+Bonus
+=====
 
 If you like browsing Github, finding, downloading and copying iOS libraries into your own project folder, then manually linking them,
 etc.., keep doing that and skip this section. 
@@ -156,8 +161,8 @@ Here is how you can try it out:
 
 Visit cocoapods.org and follow the instructions on how to install it. Basically, just: 
   
-  $ gem install cocoapods
-  $ pod setup
+     $ gem install cocoapods
+     $ pod setup
   
 Most of the COOL libraries are already available on CocoaPods. So search and find whatever you need.
 
@@ -165,24 +170,25 @@ Create a new iOS project in Xcode.
 
 cd into the project folder and create a file name "Podfile". Enter the following:
 
-  platform :ios, '7.0'
-  pod 'Reachability', '~> 3.1.1'
-  pod "AFNetworking", "~> 2.0"
+     platform :ios, '7.0'
+     pod 'Reachability', '~> 3.1.1'
+     pod "AFNetworking", "~> 2.0"
 
 Install the pods you just mentioned by executing:
 
-  $ pod install 
+     $ pod install 
   
 Notice that when you created a project earlier, you just had a project file in your folder, but now you have a workspace file.
 From this point on, always use the workspace file to open your projects. Rest assure, tesflight gem knows that too.
 
 Run the checkin command: 
   
-  $ testflight checkin
+     $ testflight checkin
 
 Run the takeoff command: 
 
-  $ testflight takeoff
+
+     $ testflight takeoff
   
   
 Now you are all set to build the best app on the App Store. 
@@ -195,12 +201,14 @@ And, well, you are using this cool gem to glue it all together.
 Enjoy!
 
 
-= Authors
+Authors
+=====
 
 Michael Berkovich
 
 
-= Contribution
+Contribution
+=====
 
 Clone the repository, make any changes you like and send me a pull request.
 
