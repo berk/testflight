@@ -1,5 +1,5 @@
 #--
-# Copyright (c) 2012 Michael Berkovich
+# Copyright (c) 2014 Michael Berkovich
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -137,8 +137,8 @@ module Testflight
 
     def upload_to_testflightapp(opts = {})
       cmd = "curl #{TESTFLIGHT_ENDPOINT} "
-      cmd << "-F file=@#{Testflight::Config.distribution_file} "
-      cmd << "-F dsym=@#{Testflight::Config.distribution_dsym_file} "
+      cmd << "-F file=@'#{Testflight::Config.distribution_file}' "
+      cmd << "-F dsym=@'#{Testflight::Config.distribution_dsym_file}' "
       cmd << "-F api_token=#{Testflight::Config.api_token} "
       cmd << "-F team_token=#{Testflight::Config.team_token} "
       cmd << "-F notify=#{opts[:notify]} "
