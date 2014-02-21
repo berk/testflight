@@ -1,0 +1,17 @@
+PATH
+  remote: .
+  specs:
+    testflight (1.0.3)
+      plist (~> 3.1.0)
+      thor (~> 0.18.1)
+
+GEM
+  specs:
+    plist (3.1.0)
+    thor (0.18.1)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  testflight!

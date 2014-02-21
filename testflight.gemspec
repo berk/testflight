@@ -20,6 +20,6 @@ Gem::Specification.new do |spec|
   spec.test_files   = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_path = ['lib', 'lib/testflight']
 
-  spec.add_runtime_dependency 'thor', '~> 0.16.0'
+  spec.add_runtime_dependency 'thor', '~> 0.18.1'
   spec.add_dependency "plist", "~> 3.1.0"
 end
