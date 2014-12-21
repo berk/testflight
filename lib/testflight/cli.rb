@@ -183,7 +183,7 @@ module Testflight
       say("                                                                                  \n")
       say("                                                                                  \n")
 
-      say("\r\nCongratulations, your build has been departed! Have a safe flight!")
+      say("\r\nCongratulations, your build has been deployed! Have a safe flight!")
       say
     rescue
 

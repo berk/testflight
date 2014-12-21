@@ -177,7 +177,8 @@ module Testflight
     end
 
     def self.project_info_file_name
-      "#{application_name}-Info.plist"
+      #"#{application_name}-Info.plist"
+      "Info.plist"
     end
 
     def self.project_info_path
